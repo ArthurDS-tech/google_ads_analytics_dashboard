@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
@@ -7,254 +7,372 @@ import { Checkbox } from '../../../components/ui/Checkbox';
 
 const ReportConfiguration = ({ onConfigChange, onSchedule, onGenerate }) => {
   const [config, setConfig] = useState({
-    dateRange: 'last-30-days',
-    customStartDate: '',
-    customEndDate: '',
+    dateRange: {
+      startDate: '',
+      endDate: ''
+    },
+    accounts: [],
     campaigns: [],
-    format: 'pdf',
-    includeCharts: true,
-    includeTables: true,
-    includeExecutiveSummary: true,
-    brandingEnabled: false,
-    logoUrl: '',
-    companyName: '',
-    reportTitle: 'Relatório de Performance - Google Ads',
-    recipients: '',
-    scheduleFrequency: 'manual',
-    scheduleDay: 'monday',
-    scheduleTime: '09:00'
+    filters: {
+      status: 'all',
+      device: 'all',
+      location: 'all'
+    },
+    groupBy: 'campaign',
+    sortBy: 'cost',
+    sortOrder: 'desc',
+    limit: 100,
+    includeZeroImpressions: false,
+    includeRemovedItems: false
   });
 
-  const dateRangeOptions = [
-    { value: 'today', label: 'Hoje' },
-    { value: 'yesterday', label: 'Ontem' },
-    { value: 'last-7-days', label: 'Últimos 7 dias' },
-    { value: 'last-30-days', label: 'Últimos 30 dias' },
-    { value: 'last-90-days', label: 'Últimos 90 dias' },
-    { value: 'this-month', label: 'Este mês' },
-    { value: 'last-month', label: 'Mês passado' },
-    { value: 'custom', label: 'Período personalizado' }
+  const [schedule, setSchedule] = useState({
+    enabled: false,
+    frequency: 'weekly',
+    time: '09:00',
+    timezone: 'America/Sao_Paulo',
+    recipients: ['']
+  });
+
+  const [errors, setErrors] = useState({});
+
+  const statusOptions = [
+    { value: 'all', label: 'Todos os Status' },
+    { value: 'enabled', label: 'Ativo' },
+    { value: 'paused', label: 'Pausado' },
+    { value: 'removed', label: 'Removido' }
   ];
 
-  const formatOptions = [
-    { value: 'pdf', label: 'PDF' },
-    { value: 'excel', label: 'Excel (XLSX)' },
-    { value: 'powerpoint', label: 'PowerPoint (PPTX)' },
-    { value: 'csv', label: 'CSV' }
+  const deviceOptions = [
+    { value: 'all', label: 'Todos os Dispositivos' },
+    { value: 'desktop', label: 'Desktop' },
+    { value: 'mobile', label: 'Mobile' },
+    { value: 'tablet', label: 'Tablet' }
   ];
 
-  const campaignOptions = [
-    { value: 'all', label: 'Todas as campanhas' },
-    { value: 'campaign-1', label: 'Campanha Black Friday 2024' },
-    { value: 'campaign-2', label: 'Campanha Natal 2024' },
-    { value: 'campaign-3', label: 'Campanha Verão 2025' },
-    { value: 'campaign-4', label: 'Campanha Institucional' }
+  const groupByOptions = [
+    { value: 'campaign', label: 'Campanha' },
+    { value: 'adgroup', label: 'Grupo de Anúncios' },
+    { value: 'keyword', label: 'Palavra-chave' },
+    { value: 'device', label: 'Dispositivo' },
+    { value: 'location', label: 'Localização' },
+    { value: 'date', label: 'Data' }
+  ];
+
+  const sortByOptions = [
+    { value: 'cost', label: 'Custo' },
+    { value: 'impressions', label: 'Impressões' },
+    { value: 'clicks', label: 'Cliques' },
+    { value: 'conversions', label: 'Conversões' },
+    { value: 'ctr', label: 'CTR' },
+    { value: 'cpc', label: 'CPC' },
+    { value: 'roas', label: 'ROAS' }
   ];
 
   const frequencyOptions = [
-    { value: 'manual', label: 'Manual' },
-    { value: 'daily', label: 'Diário' },
-    { value: 'weekly', label: 'Semanal' },
-    { value: 'monthly', label: 'Mensal' }
+    { value: 'daily', label: 'Diariamente' },
+    { value: 'weekly', label: 'Semanalmente' },
+    { value: 'monthly', label: 'Mensalmente' },
+    { value: 'quarterly', label: 'Trimestralmente' }
   ];
 
-  const dayOptions = [
-    { value: 'monday', label: 'Segunda-feira' },
-    { value: 'tuesday', label: 'Terça-feira' },
-    { value: 'wednesday', label: 'Quarta-feira' },
-    { value: 'thursday', label: 'Quinta-feira' },
-    { value: 'friday', label: 'Sexta-feira' }
-  ];
+  useEffect(() => {
+    // Set default date range (last 30 days)
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - 30);
 
-  const handleConfigChange = (key, value) => {
-    const newConfig = { ...config, [key]: value };
-    setConfig(newConfig);
-    onConfigChange?.(newConfig);
+    setConfig(prev => ({
+      ...prev,
+      dateRange: {
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: endDate.toISOString().split('T')[0]
+      }
+    }));
+  }, []);
+
+  useEffect(() => {
+    onConfigChange?.(config);
+  }, [config, onConfigChange]);
+
+  const handleConfigChange = (field, value) => {
+    setConfig(prev => {
+      const newConfig = { ...prev };
+      
+      // Handle nested fields
+      if (field.includes('.')) {
+        const [parent, child] = field.split('.');
+        newConfig[parent] = { ...newConfig[parent], [child]: value };
+      } else {
+        newConfig[field] = value;
+      }
+      
+      return newConfig;
+    });
+  };
+
+  const handleScheduleChange = (field, value) => {
+    setSchedule(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleAddRecipient = () => {
+    setSchedule(prev => ({
+      ...prev,
+      recipients: [...prev.recipients, '']
+    }));
+  };
+
+  const handleRemoveRecipient = (index) => {
+    setSchedule(prev => ({
+      ...prev,
+      recipients: prev.recipients.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleRecipientChange = (index, value) => {
+    setSchedule(prev => ({
+      ...prev,
+      recipients: prev.recipients.map((recipient, i) => 
+        i === index ? value : recipient
+      )
+    }));
+  };
+
+  const validateConfig = () => {
+    const newErrors = {};
+    
+    if (!config.dateRange.startDate) {
+      newErrors.startDate = 'Data inicial é obrigatória';
+    }
+    
+    if (!config.dateRange.endDate) {
+      newErrors.endDate = 'Data final é obrigatória';
+    }
+    
+    if (config.dateRange.startDate && config.dateRange.endDate) {
+      const start = new Date(config.dateRange.startDate);
+      const end = new Date(config.dateRange.endDate);
+      
+      if (start > end) {
+        newErrors.dateRange = 'Data inicial não pode ser posterior à data final';
+      }
+    }
+    
+    if (config.limit < 1 || config.limit > 10000) {
+      newErrors.limit = 'Limite deve estar entre 1 e 10.000';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleGenerate = () => {
+    if (validateConfig()) {
+      onGenerate?.(config);
+    }
+  };
+
+  const handleScheduleReport = () => {
+    if (validateConfig()) {
+      onSchedule?.(config, schedule);
+    }
   };
 
   return (
     <div className="h-full flex flex-col">
       <div className="p-4 border-b border-border">
-        <h2 className="text-lg font-semibold text-foreground">Configurações do Relatório</h2>
-        <p className="text-sm text-muted-foreground">Personalize seu relatório</p>
+        <h3 className="font-medium text-foreground mb-1">Configuração do Relatório</h3>
+        <p className="text-sm text-muted-foreground">Personalize os dados e filtros</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-6">
         {/* Date Range */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Período de Dados</h3>
-          <Select
-            label="Período"
-            options={dateRangeOptions}
-            value={config.dateRange}
-            onChange={(value) => handleConfigChange('dateRange', value)}
-            className="mb-3"
-          />
-          
-          {config.dateRange === 'custom' && (
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                label="Data inicial"
-                type="date"
-                value={config.customStartDate}
-                onChange={(e) => handleConfigChange('customStartDate', e.target.value)}
-              />
-              <Input
-                label="Data final"
-                type="date"
-                value={config.customEndDate}
-                onChange={(e) => handleConfigChange('customEndDate', e.target.value)}
-              />
-            </div>
-          )}
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Período</h4>
+          <div className="space-y-2">
+            <Input
+              type="date"
+              label="Data Inicial"
+              value={config.dateRange.startDate}
+              onChange={(e) => handleConfigChange('dateRange.startDate', e.target.value)}
+              error={errors.startDate}
+            />
+            <Input
+              type="date"
+              label="Data Final"
+              value={config.dateRange.endDate}
+              onChange={(e) => handleConfigChange('dateRange.endDate', e.target.value)}
+              error={errors.endDate}
+            />
+            {errors.dateRange && (
+              <p className="text-sm text-error">{errors.dateRange}</p>
+            )}
+          </div>
         </div>
 
-        {/* Campaign Selection */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Campanhas</h3>
-          <Select
-            label="Selecionar campanhas"
-            options={campaignOptions}
-            value={config.campaigns}
-            onChange={(value) => handleConfigChange('campaigns', value)}
-            multiple
-            searchable
-          />
-        </div>
-
-        {/* Format Options */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Formato de Saída</h3>
-          <Select
-            label="Formato"
-            options={formatOptions}
-            value={config.format}
-            onChange={(value) => handleConfigChange('format', value)}
-          />
-        </div>
-
-        {/* Content Options */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Conteúdo do Relatório</h3>
+        {/* Filters */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Filtros</h4>
           <div className="space-y-3">
-            <Checkbox
-              label="Incluir gráficos"
-              checked={config.includeCharts}
-              onChange={(e) => handleConfigChange('includeCharts', e.target.checked)}
+            <Select
+              label="Status"
+              value={config.filters.status}
+              onChange={(value) => handleConfigChange('filters.status', value)}
+              options={statusOptions}
             />
-            <Checkbox
-              label="Incluir tabelas detalhadas"
-              checked={config.includeTables}
-              onChange={(e) => handleConfigChange('includeTables', e.target.checked)}
-            />
-            <Checkbox
-              label="Incluir resumo executivo"
-              checked={config.includeExecutiveSummary}
-              onChange={(e) => handleConfigChange('includeExecutiveSummary', e.target.checked)}
+            <Select
+              label="Dispositivo"
+              value={config.filters.device}
+              onChange={(value) => handleConfigChange('filters.device', value)}
+              options={deviceOptions}
             />
           </div>
         </div>
 
-        {/* Branding */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Personalização de Marca</h3>
-          <Checkbox
-            label="Ativar marca personalizada"
-            description="Adicione sua logo e informações da empresa"
-            checked={config.brandingEnabled}
-            onChange={(e) => handleConfigChange('brandingEnabled', e.target.checked)}
-            className="mb-3"
+        {/* Grouping and Sorting */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Agrupamento e Ordenação</h4>
+          <div className="space-y-3">
+            <Select
+              label="Agrupar por"
+              value={config.groupBy}
+              onChange={(value) => handleConfigChange('groupBy', value)}
+              options={groupByOptions}
+            />
+            <Select
+              label="Ordenar por"
+              value={config.sortBy}
+              onChange={(value) => handleConfigChange('sortBy', value)}
+              options={sortByOptions}
+            />
+            <Select
+              label="Ordem"
+              value={config.sortOrder}
+              onChange={(value) => handleConfigChange('sortOrder', value)}
+              options={[
+                { value: 'desc', label: 'Decrescente' },
+                { value: 'asc', label: 'Crescente' }
+              ]}
+            />
+          </div>
+        </div>
+
+        {/* Limits */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Limites</h4>
+          <Input
+            type="number"
+            label="Limite de registros"
+            value={config.limit}
+            onChange={(e) => handleConfigChange('limit', parseInt(e.target.value))}
+            min="1"
+            max="10000"
+            error={errors.limit}
           />
-          
-          {config.brandingEnabled && (
-            <div className="space-y-3">
-              <Input
-                label="Nome da empresa"
-                value={config.companyName}
-                onChange={(e) => handleConfigChange('companyName', e.target.value)}
-                placeholder="Digite o nome da sua empresa"
-              />
-              <Input
-                label="URL da logo"
-                value={config.logoUrl}
-                onChange={(e) => handleConfigChange('logoUrl', e.target.value)}
-                placeholder="https://exemplo.com/logo.png"
-              />
-              <Input
-                label="Título do relatório"
-                value={config.reportTitle}
-                onChange={(e) => handleConfigChange('reportTitle', e.target.value)}
-              />
-            </div>
-          )}
+        </div>
+
+        {/* Options */}
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Opções</h4>
+          <div className="space-y-3">
+            <Checkbox
+              label="Incluir itens com zero impressões"
+              checked={config.includeZeroImpressions}
+              onChange={(checked) => handleConfigChange('includeZeroImpressions', checked)}
+            />
+            <Checkbox
+              label="Incluir itens removidos"
+              checked={config.includeRemovedItems}
+              onChange={(checked) => handleConfigChange('includeRemovedItems', checked)}
+            />
+          </div>
         </div>
 
         {/* Scheduling */}
-        <div>
-          <h3 className="font-medium text-foreground mb-3">Agendamento</h3>
-          <Select
-            label="Frequência"
-            options={frequencyOptions}
-            value={config.scheduleFrequency}
-            onChange={(value) => handleConfigChange('scheduleFrequency', value)}
-            className="mb-3"
-          />
-          
-          {config.scheduleFrequency !== 'manual' && (
-            <div className="space-y-3">
-              {config.scheduleFrequency === 'weekly' && (
+        <div className="space-y-3">
+          <h4 className="font-medium text-foreground">Agendamento</h4>
+          <div className="space-y-3">
+            <Checkbox
+              label="Ativar agendamento automático"
+              checked={schedule.enabled}
+              onChange={(checked) => handleScheduleChange('enabled', checked)}
+            />
+            
+            {schedule.enabled && (
+              <div className="space-y-3 ml-4">
                 <Select
-                  label="Dia da semana"
-                  options={dayOptions}
-                  value={config.scheduleDay}
-                  onChange={(value) => handleConfigChange('scheduleDay', value)}
+                  label="Frequência"
+                  value={schedule.frequency}
+                  onChange={(value) => handleScheduleChange('frequency', value)}
+                  options={frequencyOptions}
                 />
-              )}
-              <Input
-                label="Horário"
-                type="time"
-                value={config.scheduleTime}
-                onChange={(e) => handleConfigChange('scheduleTime', e.target.value)}
-              />
-              <Input
-                label="Destinatários (emails separados por vírgula)"
-                value={config.recipients}
-                onChange={(e) => handleConfigChange('recipients', e.target.value)}
-                placeholder="email1@exemplo.com, email2@exemplo.com"
-              />
-            </div>
-          )}
+                <Input
+                  type="time"
+                  label="Horário"
+                  value={schedule.time}
+                  onChange={(e) => handleScheduleChange('time', e.target.value)}
+                />
+                
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Destinatários
+                  </label>
+                  {schedule.recipients.map((recipient, index) => (
+                    <div key={index} className="flex items-center space-x-2 mb-2">
+                      <Input
+                        type="email"
+                        placeholder="email@exemplo.com"
+                        value={recipient}
+                        onChange={(e) => handleRecipientChange(index, e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveRecipient(index)}
+                        className="h-8 w-8 text-error hover:text-error"
+                      >
+                        <Icon name="X" size={16} />
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddRecipient}
+                    className="w-full"
+                  >
+                    <Icon name="Plus" size={16} className="mr-2" />
+                    Adicionar Destinatário
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Action Buttons */}
-      <div className="p-4 border-t border-border space-y-2">
+      <div className="p-4 border-t border-border space-y-3">
         <Button
-          onClick={() => onGenerate(config)}
+          onClick={handleGenerate}
           className="w-full"
+          size="lg"
         >
           <Icon name="FileText" size={16} className="mr-2" />
-          Gerar Relatório Agora
+          Gerar Relatório
         </Button>
         
-        {config.scheduleFrequency !== 'manual' && (
+        {schedule.enabled && (
           <Button
             variant="outline"
-            onClick={() => onSchedule(config)}
+            onClick={handleScheduleReport}
             className="w-full"
           >
-            <Icon name="Calendar" size={16} className="mr-2" />
+            <Icon name="Clock" size={16} className="mr-2" />
             Agendar Relatório
           </Button>
         )}
-        
-        <Button
-          variant="ghost"
-          className="w-full"
-        >
-          <Icon name="Save" size={16} className="mr-2" />
-          Salvar Configurações
-        </Button>
       </div>
     </div>
   );
