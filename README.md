@@ -98,6 +98,30 @@ Build the application for production:
 npm run build
 ```
 
+## Como rodar o backend (Google Ads API + Supabase)
+
+1. Entre na pasta do backend:
+   ```bash
+   cd backend
+   ```
+2. Instale as dependências:
+   ```bash
+   npm install
+   ```
+3. Crie um arquivo `.env` com as variáveis do Supabase e Google Ads (veja exemplo em `config/database.js` e README do backend original).
+4. Rode o backend:
+   ```bash
+   npm start
+   ```
+5. O backend estará disponível em `http://localhost:3001` (ou porta definida no `.env`).
+
+6. No frontend, configure a variável de ambiente para apontar para o backend:
+   - Exemplo: `VITE_API_URL=http://localhost:3001/api`
+
+**Importante:**
+- O layout e design do frontend NÃO foram alterados.
+- Apenas a API/backend foi adicionada para integração.
+
 ## 🙏 Acknowledgments
 
 - Built with [Rocket.new](https://rocket.new)
