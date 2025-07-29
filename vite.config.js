@@ -15,4 +15,11 @@ export default defineConfig({
       'styles': path.resolve(__dirname, './src/styles'),
     },
   },
+  server: {
+    allowedHosts: [
+      'localhost',
+      '127.0.0.1',
+      '527489da51e5.ngrok-free.app'
+    ]
+  }
 })
