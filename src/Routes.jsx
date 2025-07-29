@@ -8,6 +8,8 @@ import KeywordPerformance from "pages/keyword-performance";
 import CampaignManagement from "pages/campaign-management";
 import Reports from "pages/reports";
 import CampaignAnalytics from "pages/campaign-analytics";
+import Umbler from "pages/umbler";
+import IA from "pages/ia";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
@@ -23,6 +25,8 @@ const Routes = () => {
         <Route path="/campaign-management" element={<CampaignManagement />} />
         <Route path="/reports" element={<Reports />} />
         <Route path="/campaign-analytics" element={<CampaignAnalytics />} />
+        <Route path="/umbler" element={<Umbler />} />
+        <Route path="/ia" element={<IA />} />
         <Route path="*" element={<NotFound />} />
       </RouterRoutes>
       </ErrorBoundary>

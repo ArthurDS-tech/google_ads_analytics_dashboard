@@ -14,6 +14,8 @@ const Header = () => {
     { label: 'Palavras-chave', path: '/keyword-performance', icon: 'Hash' },
     { label: 'Análises', path: '/campaign-analytics', icon: 'TrendingUp' },
     { label: 'Relatórios', path: '/reports', icon: 'FileText' },
+    { label: 'Umbler', path: '/umbler', icon: 'Globe' },
+    { label: 'IA', path: '/ia', icon: 'Brain' },
   ];
 
   const isActiveRoute = (path) => location.pathname === path;
