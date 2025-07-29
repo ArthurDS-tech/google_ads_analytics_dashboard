@@ -1,14 +1,14 @@
 import apiClient from '../utils/apiClient';
 
 class ApiUmbler {
-  async getClientes() {
-    // Busca todos os clientes do backend
-    return await apiClient.get('/clientes');
+  async getClientes(params = {}) {
+    // Busca todos os contatos do backend
+    return await apiClient.get('/contacts', params);
   }
 
-  async getMensagensCliente(clienteId) {
-    // Busca as mensagens de um cliente específico
-    return await apiClient.get(`/clientes/${clienteId}/mensagens`);
+  async getMensagensCliente(contactId, params = {}) {
+    // Busca as mensagens de um contato específico
+    return await apiClient.get(`/messages/contact/${contactId}`, params);
   }
 }
 
