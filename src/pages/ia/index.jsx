@@ -5,165 +5,154 @@ import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 
 const IA = () => {
-  const [selectedTool, setSelectedTool] = useState('keyword-generator');
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedConcept, setSelectedConcept] = useState('cpc');
 
-  const aiTools = [
+  const googleAdsConcepts = [
     {
-      id: 'keyword-generator',
-      name: 'Gerador de Palavras-chave',
-      description: 'IA para descobrir palavras-chave relevantes e lucrativas',
-      icon: 'Search',
-      status: 'active',
-      usage: '85%'
-    },
-    {
-      id: 'ad-optimizer',
-      name: 'Otimizador de Anúncios',
-      description: 'Análise e sugestões automáticas para melhorar CTR',
-      icon: 'TrendingUp',
-      status: 'active',
-      usage: '72%'
-    },
-    {
-      id: 'bid-manager',
-      name: 'Gerenciador de Lances',
-      description: 'Ajuste automático de lances baseado em IA',
-      icon: 'DollarSign',
-      status: 'active',
-      usage: '91%'
-    },
-    {
-      id: 'audience-analyzer',
-      name: 'Analisador de Audiência',
-      description: 'Identificação de públicos-alvo usando machine learning',
-      icon: 'Users',
-      status: 'learning',
-      usage: '45%'
-    }
-  ];
-
-  const recentSuggestions = [
-    {
-      id: 1,
-      type: 'keyword',
-      title: 'Nova palavra-chave identificada',
-      description: '"marketing digital agencia" - CPC baixo, volume alto',
-      impact: 'high',
-      status: 'pending'
-    },
-    {
-      id: 2,
-      type: 'bid',
-      title: 'Ajuste de lance recomendado',
-      description: 'Reduzir lance da campanha "Produto A" em 15%',
-      impact: 'medium',
-      status: 'applied'
-    },
-    {
-      id: 3,
-      type: 'ad',
-      title: 'Variação de anúncio sugerida',
-      description: 'Teste A/B para título com call-to-action mais forte',
-      impact: 'high',
-      status: 'testing'
-    },
-    {
-      id: 4,
-      type: 'audience',
-      title: 'Novo segmento de audiência',
-      description: 'Público interessado em automação encontrado',
-      impact: 'medium',
-      status: 'pending'
-    }
-  ];
-
-  const aiMetrics = [
-    {
-      label: 'ROI Melhorado',
-      value: '+34%',
-      description: 'Comparado ao mês anterior',
-      icon: 'TrendingUp',
-      color: 'success'
-    },
-    {
-      label: 'Custo Reduzido',
-      value: '-18%',
-      description: 'CPC médio otimizado',
-      icon: 'TrendingDown',
-      color: 'primary'
-    },
-    {
-      label: 'CTR Aumentado',
-      value: '+27%',
-      description: 'Taxa de cliques melhorada',
+      id: 'cpc',
+      name: 'CPC - Custo Por Clique',
       icon: 'MousePointer',
-      color: 'accent'
+      color: 'primary',
+      description: 'O valor que você paga cada vez que alguém clica no seu anúncio.',
+      detailedExplanation: `
+        O CPC (Cost Per Click) é uma das métricas mais fundamentais do Google Ads. Representa o valor médio que você paga por cada clique nos seus anúncios.
+
+        **Como funciona:**
+        • Você define um lance máximo que está disposto a pagar por clique
+        • O Google usa um leilão para determinar qual anúncio será exibido
+        • Você só paga quando alguém realmente clica no seu anúncio
+
+        **Fatores que influenciam o CPC:**
+        • Concorrência pela palavra-chave
+        • Qualidade do seu anúncio (Quality Score)
+        • Relevância da página de destino
+        • Horário e localização da pesquisa
+
+        **Dicas para otimizar:**
+        • Melhore a qualidade dos seus anúncios
+        • Use palavras-chave mais específicas (long-tail)
+        • Otimize suas páginas de destino
+        • Teste diferentes horários e localizações
+      `,
+      examples: [
+        'CPC baixo: R$ 0,50 - R$ 2,00 (nichos menos competitivos)',
+        'CPC médio: R$ 2,00 - R$ 10,00 (maioria dos mercados)',
+        'CPC alto: R$ 10,00+ (seguros, advogados, finanças)'
+      ]
     },
     {
-      label: 'Conversões',
-      value: '+41%',
-      description: 'Aumento nas conversões',
+      id: 'cpa',
+      name: 'CPA - Custo Por Aquisição',
       icon: 'Target',
-      color: 'warning'
+      color: 'success',
+      description: 'O custo médio para adquirir um cliente ou conversão.',
+      detailedExplanation: `
+        O CPA (Cost Per Acquisition) mede quanto você gasta, em média, para conseguir uma conversão (venda, lead, cadastro, etc.).
+
+        **Cálculo do CPA:**
+        CPA = Gasto Total com Anúncios ÷ Número de Conversões
+
+        **Por que é importante:**
+        • Mostra a eficiência real dos seus anúncios
+        • Ajuda a definir orçamentos realistas
+        • Permite comparar diferentes campanhas
+        • Facilita o cálculo do ROI
+
+        **Estratégias para reduzir o CPA:**
+        • Melhore a taxa de conversão da landing page
+        • Use palavras-chave mais qualificadas
+        • Otimize os textos dos anúncios
+        • Implemente remarketing
+        • Use automações inteligentes do Google
+
+        **CPA Alvo:**
+        Defina um CPA máximo baseado no valor que cada cliente traz para o seu negócio.
+      `,
+      examples: [
+        'E-commerce: CPA de R$ 50 para venda de R$ 200',
+        'Geração de leads: CPA de R$ 25 por lead qualificado',
+        'SaaS: CPA de R$ 150 para assinatura mensal de R$ 99'
+      ]
+    },
+    {
+      id: 'roas',
+      name: 'ROAS - Retorno do Investimento Publicitário',
+      icon: 'TrendingUp',
+      color: 'warning',
+      description: 'A receita gerada para cada real investido em publicidade.',
+      detailedExplanation: `
+        O ROAS (Return on Advertising Spend) é a métrica que mostra quantos reais de receita você gera para cada real gasto em publicidade.
+
+        **Cálculo do ROAS:**
+        ROAS = Receita Gerada ÷ Gasto com Anúncios
+
+        **Interpretação:**
+        • ROAS de 1x = Você recupera o que gastou (break-even)
+        • ROAS de 3x = Para cada R$ 1 gasto, você ganha R$ 3
+        • ROAS de 5x = Retorno de R$ 5 para cada R$ 1 investido
+
+        **ROAS por setor (referências):**
+        • E-commerce: 4x - 6x é considerado bom
+        • Serviços: 3x - 5x é aceitável
+        • B2B: 2x - 4x pode ser suficiente
+
+        **Como melhorar o ROAS:**
+        • Aumente o valor médio do pedido
+        • Melhore a taxa de conversão
+        • Reduza o CPC através de otimizações
+        • Foque em produtos com maior margem
+        • Use remarketing para clientes existentes
+      `,
+      examples: [
+        'Gasto: R$ 1.000 | Receita: R$ 4.000 | ROAS: 4x',
+        'Gasto: R$ 500 | Receita: R$ 2.500 | ROAS: 5x',
+        'Gasto: R$ 2.000 | Receita: R$ 6.000 | ROAS: 3x'
+      ]
+    },
+    {
+      id: 'ctr',
+      name: 'CTR - Taxa de Cliques',
+      icon: 'MousePointer2',
+      color: 'accent',
+      description: 'Percentual de pessoas que clicam no seu anúncio após vê-lo.',
+      detailedExplanation: `
+        O CTR (Click-Through Rate) mede o percentual de pessoas que clicam no seu anúncio em relação ao número total de visualizações.
+
+        **Cálculo do CTR:**
+        CTR = (Cliques ÷ Impressões) × 100
+
+        **Benchmarks de CTR:**
+        • Rede de Pesquisa: 2% - 5% é considerado bom
+        • Rede Display: 0,5% - 1% é normal
+        • Shopping: 0,7% - 1,5% é aceitável
+        • YouTube: 1% - 3% é satisfatório
+
+        **Por que o CTR é importante:**
+        • Influencia diretamente o Quality Score
+        • Afeta o CPC e posição dos anúncios
+        • Indica relevância do anúncio para o público
+        • Impacta o orçamento diário
+
+        **Como melhorar o CTR:**
+        • Escreva títulos mais atrativos e relevantes
+        • Use extensões de anúncio
+        • Inclua calls-to-action claros
+        • Teste diferentes variações de anúncios
+        • Use palavras-chave no texto do anúncio
+        • Segmente melhor o público-alvo
+      `,
+      examples: [
+        'Impressões: 10.000 | Cliques: 300 | CTR: 3%',
+        'Impressões: 5.000 | Cliques: 150 | CTR: 3%',
+        'Impressões: 20.000 | Cliques: 400 | CTR: 2%'
+      ]
     }
   ];
 
-  const getImpactColor = (impact) => {
-    switch (impact) {
-      case 'high':
-        return 'text-success';
-      case 'medium':
-        return 'text-warning';
-      case 'low':
-        return 'text-muted-foreground';
-      default:
-        return 'text-muted-foreground';
-    }
-  };
+  const selectedConceptData = googleAdsConcepts.find(concept => concept.id === selectedConcept);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-warning text-warning-foreground';
-      case 'applied':
-        return 'bg-success text-success-foreground';
-      case 'testing':
-        return 'bg-primary text-primary-foreground';
-      default:
-        return 'bg-muted text-muted-foreground';
-    }
-  };
-
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'pending':
-        return 'Pendente';
-      case 'applied':
-        return 'Aplicado';
-      case 'testing':
-        return 'Testando';
-      default:
-        return 'Desconhecido';
-    }
-  };
-
-  const getToolStatusColor = (status) => {
-    switch (status) {
-      case 'active':
-        return 'text-success';
-      case 'learning':
-        return 'text-warning';
-      case 'inactive':
-        return 'text-muted-foreground';
-      default:
-        return 'text-muted-foreground';
-    }
-  };
-
-  const handleAnalyze = () => {
-    setIsAnalyzing(true);
-    setTimeout(() => setIsAnalyzing(false), 3000);
+  const handleChatGPTRedirect = () => {
+    window.open('https://chatgpt.com/share/68869a00-58ac-800c-b034-f11535cf8137', '_blank');
   };
 
   return (
@@ -177,274 +166,165 @@ const IA = () => {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 space-y-4 lg:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">IA Assistant</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Guia Google Ads com IA</h1>
               <p className="text-muted-foreground">
-                Inteligência artificial para otimização automática de campanhas Google Ads
+                Aprenda os principais conceitos do Google Ads e tire dúvidas com inteligência artificial
               </p>
             </div>
             
             <div className="flex flex-wrap items-center gap-3">
               <Button 
                 variant="outline" 
-                size="sm" 
-                onClick={handleAnalyze}
-                disabled={isAnalyzing}
+                size="sm"
+                onClick={handleChatGPTRedirect}
               >
-                <Icon name={isAnalyzing ? "Loader2" : "Brain"} size={16} className={`mr-2 ${isAnalyzing ? 'animate-spin' : ''}`} />
-                {isAnalyzing ? 'Analisando...' : 'Análise IA'}
+                <Icon name="MessageCircle" size={16} className="mr-2" />
+                Chat com IA
               </Button>
               
-              <Button variant="outline" size="sm">
-                <Icon name="Settings" size={16} className="mr-2" />
-                Configurar IA
-              </Button>
-              
-              <Button size="sm">
-                <Icon name="Zap" size={16} className="mr-2" />
-                Ativar Auto-Pilot
+              <Button 
+                size="sm"
+                onClick={handleChatGPTRedirect}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              >
+                <Icon name="ExternalLink" size={16} className="mr-2" />
+                Consultar ChatGPT
               </Button>
             </div>
           </div>
 
-          {/* AI Metrics */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {aiMetrics.map((metric, index) => (
-              <div key={index} className="bg-card border border-border rounded-lg p-6">
-                <div className="flex items-center justify-between">
+          {/* Concept Selector */}
+          <div className="bg-card border border-border rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Principais Conceitos do Google Ads</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {googleAdsConcepts.map((concept) => (
+                <button
+                  key={concept.id}
+                  onClick={() => setSelectedConcept(concept.id)}
+                  className={`p-4 rounded-lg border-2 transition-all duration-200 text-left ${
+                    selectedConcept === concept.id
+                      ? 'border-primary bg-primary/5'
+                      : 'border-border hover:border-primary/50 hover:bg-muted/50'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3 mb-2">
+                    <div className={`p-2 rounded-lg bg-${concept.color}/10`}>
+                      <Icon name={concept.icon} size={20} className={`text-${concept.color}`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-foreground text-sm">{concept.name}</h3>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{concept.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Detailed Explanation */}
+          <div className="bg-card border border-border rounded-lg p-6 mb-8">
+            {selectedConceptData && (
+              <>
+                <div className="flex items-center space-x-3 mb-6">
+                  <div className={`p-3 rounded-lg bg-${selectedConceptData.color}/10`}>
+                    <Icon name={selectedConceptData.icon} size={24} className={`text-${selectedConceptData.color}`} />
+                  </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{metric.label}</p>
-                    <p className="text-2xl font-bold text-foreground mt-1">{metric.value}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{metric.description}</p>
-                  </div>
-                  <div className={`p-3 rounded-lg bg-${metric.color}/10`}>
-                    <Icon name={metric.icon} size={24} className={`text-${metric.color}`} />
+                    <h2 className="text-2xl font-semibold text-foreground">{selectedConceptData.name}</h2>
+                    <p className="text-muted-foreground">{selectedConceptData.description}</p>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-            {/* AI Tools */}
-            <div className="xl:col-span-2">
-              <div className="bg-card border border-border rounded-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Ferramentas de IA</h2>
-                  <Button size="sm" variant="outline">
-                    <Icon name="Plus" size={16} className="mr-2" />
-                    Nova Ferramenta
-                  </Button>
+                
+                <div className="prose prose-gray dark:prose-invert max-w-none">
+                  <div className="text-foreground whitespace-pre-line">
+                    {selectedConceptData.detailedExplanation}
+                  </div>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {aiTools.map((tool) => (
-                    <div 
-                      key={tool.id} 
-                      className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                        selectedTool === tool.id 
-                          ? 'border-primary bg-primary/5' 
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                      onClick={() => setSelectedTool(tool.id)}
-                    >
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <div className="p-2 bg-primary/10 rounded-lg">
-                            <Icon name={tool.icon} size={20} className="text-primary" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-foreground">{tool.name}</h3>
-                            <p className="text-sm text-muted-foreground">{tool.description}</p>
-                          </div>
+                {selectedConceptData.examples && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold text-foreground mb-3">Exemplos Práticos:</h3>
+                    <div className="space-y-2">
+                      {selectedConceptData.examples.map((example, index) => (
+                        <div key={index} className="flex items-center space-x-2 p-3 bg-muted/50 rounded-lg">
+                          <Icon name="ArrowRight" size={16} className="text-primary" />
+                          <span className="text-sm text-foreground">{example}</span>
                         </div>
-                        <div className={`text-xs font-medium ${getToolStatusColor(tool.status)}`}>
-                          ●
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Uso da IA</span>
-                          <span className="text-foreground">{tool.usage}</span>
-                        </div>
-                        <div className="w-full bg-muted rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all duration-300" 
-                            style={{ width: tool.usage }}
-                          ></div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-end mt-4">
-                        <Button size="sm" variant={selectedTool === tool.id ? "default" : "ghost"}>
-                          {selectedTool === tool.id ? "Configurar" : "Selecionar"}
-                        </Button>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Recent AI Suggestions */}
-            <div className="xl:col-span-1">
-              <div className="bg-card border border-border rounded-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Sugestões da IA</h2>
-                  <Button variant="ghost" size="sm">
-                    <Icon name="RefreshCw" size={16} />
-                  </Button>
-                </div>
-                
-                <div className="space-y-4">
-                  {recentSuggestions.map((suggestion) => (
-                    <div key={suggestion.id} className="border border-border rounded-lg p-4">
-                      <div className="flex items-start justify-between mb-2">
-                        <div className="flex items-center space-x-2">
-                          <Icon 
-                            name={
-                              suggestion.type === 'keyword' ? 'Hash' :
-                              suggestion.type === 'bid' ? 'DollarSign' :
-                              suggestion.type === 'ad' ? 'FileText' : 'Users'
-                            } 
-                            size={16} 
-                            className="text-primary" 
-                          />
-                          <span className={`text-xs font-medium ${getImpactColor(suggestion.impact)}`}>
-                            {suggestion.impact === 'high' ? 'Alto' : suggestion.impact === 'medium' ? 'Médio' : 'Baixo'} Impacto
-                          </span>
-                        </div>
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(suggestion.status)}`}>
-                          {getStatusText(suggestion.status)}
-                        </span>
-                      </div>
-                      
-                      <h3 className="font-medium text-foreground mb-1">{suggestion.title}</h3>
-                      <p className="text-xs text-muted-foreground mb-3">{suggestion.description}</p>
-                      
-                      <div className="flex space-x-2">
-                        <Button size="sm" variant="ghost" className="h-7 px-2 text-xs">
-                          {suggestion.status === 'pending' ? 'Aplicar' : 'Ver'}
-                        </Button>
-                        <Button size="sm" variant="ghost" className="h-7 px-2 text-xs">
-                          Detalhes
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
-          {/* AI Insights and Performance */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* AI Performance Chart */}
-            <div className="bg-card border border-border rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Performance da IA</h2>
-              <div className="h-64 flex items-center justify-center bg-muted/30 rounded-lg">
-                <div className="text-center">
-                  <Icon name="BarChart3" size={48} className="text-muted-foreground mx-auto mb-3" />
-                  <p className="text-muted-foreground">Gráfico de Performance da IA</p>
-                  <p className="text-xs text-muted-foreground mt-1">Dados em tempo real das otimizações</p>
+          {/* ChatGPT Integration */}
+          <div className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg flex items-center justify-center">
+                  <Icon name="Brain" size={24} className="text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-foreground">Consultoria Personalizada com IA</h2>
+                  <p className="text-muted-foreground">
+                    Tire suas dúvidas específicas sobre Google Ads com inteligência artificial
+                  </p>
                 </div>
               </div>
+              <Button 
+                onClick={handleChatGPTRedirect}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+              >
+                <Icon name="ExternalLink" size={16} className="mr-2" />
+                Acessar Chat
+              </Button>
             </div>
-
-            {/* AI Learning Status */}
-            <div className="bg-card border border-border rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Status do Aprendizado</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Análise de Palavras-chave</span>
-                    <span className="text-foreground">92%</span>
+                <h3 className="text-lg font-semibold text-foreground">O que você pode perguntar:</h3>
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <Icon name="MessageSquare" size={16} className="text-purple-600 mt-1" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Estratégias específicas</p>
+                      <p className="text-xs text-muted-foreground">Como otimizar campanhas para seu nicho</p>
+                    </div>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-success h-2 rounded-full" style={{ width: '92%' }}></div>
+                  <div className="flex items-start space-x-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <Icon name="Calculator" size={16} className="text-blue-600 mt-1" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Cálculos personalizados</p>
+                      <p className="text-xs text-muted-foreground">ROAS, CPA e orçamentos ideais</p>
+                    </div>
                   </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Otimização de Lances</span>
-                    <span className="text-foreground">78%</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '78%' }}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Análise de Audiência</span>
-                    <span className="text-foreground">65%</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-warning h-2 rounded-full" style={{ width: '65%' }}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Criação de Anúncios</span>
-                    <span className="text-foreground">43%</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2">
-                    <div className="bg-accent h-2 rounded-full" style={{ width: '43%' }}></div>
+                  <div className="flex items-start space-x-3 p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <Icon name="TrendingUp" size={16} className="text-green-600 mt-1" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Análise de performance</p>
+                      <p className="text-xs text-muted-foreground">Interpretação de métricas e KPIs</p>
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="mt-6 p-4 bg-primary/10 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <Icon name="Brain" size={20} className="text-primary" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">IA em Evolução</p>
-                    <p className="text-xs text-muted-foreground">
-                      Quanto mais dados, melhor a performance das sugestões
-                    </p>
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground">Exemplos de perguntas:</h3>
+                <div className="space-y-2">
+                  <div className="p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">"Meu CPC está em R$ 5,00, como posso reduzir?"</p>
+                  </div>
+                  <div className="p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">"Qual ROAS é ideal para e-commerce de moda?"</p>
+                  </div>
+                  <div className="p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">"Como melhorar CTR de campanhas Display?"</p>
+                  </div>
+                  <div className="p-3 bg-white/50 dark:bg-gray-800/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">"Estratégia de lances para conversões"</p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          {/* AI Configuration Panel */}
-          <div className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Configurações da IA</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="Zap" size={24} className="text-primary" />
-                </div>
-                <h3 className="font-medium text-foreground mb-2">Auto-Pilot</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Aplicação automática de otimizações aprovadas
-                </p>
-                <Button variant="outline" size="sm">Configurar</Button>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="Shield" size={24} className="text-success" />
-                </div>
-                <h3 className="font-medium text-foreground mb-2">Limites de Segurança</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Defina limites para mudanças automáticas
-                </p>
-                <Button variant="outline" size="sm">Ajustar</Button>
-              </div>
-              
-              <div className="text-center">
-                <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="Bell" size={24} className="text-accent" />
-                </div>
-                <h3 className="font-medium text-foreground mb-2">Notificações</h3>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Receba alertas sobre sugestões importantes
-                </p>
-                <Button variant="outline" size="sm">Personalizar</Button>
               </div>
             </div>
           </div>

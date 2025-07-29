@@ -5,102 +5,94 @@ import Icon from '../../components/AppIcon';
 import Button from '../../components/ui/Button';
 
 const Umbler = () => {
-  const [selectedPlan, setSelectedPlan] = useState('premium');
-  const [isManaging, setIsManaging] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('todos');
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
-  const hostingPlans = [
+  const atendimentoStats = [
     {
-      id: 'basic',
-      name: 'Básico',
-      price: 'R$ 19,90',
-      storage: '5 GB',
-      bandwidth: '100 GB',
-      domains: '1',
-      databases: '3',
-      email: '10',
-      ssl: true,
-      backup: false
+      label: 'Total de Atendimentos',
+      value: '247',
+      icon: 'MessageSquare',
+      color: 'primary',
+      change: '+12',
+      changeType: 'positive'
     },
     {
-      id: 'premium',
-      name: 'Premium',
-      price: 'R$ 39,90',
-      storage: '20 GB',
-      bandwidth: 'Ilimitado',
-      domains: '5',
-      databases: '20',
-      email: '50',
-      ssl: true,
-      backup: true
+      label: 'Atendimentos Abertos',
+      value: '23',
+      icon: 'Clock',
+      color: 'warning',
+      change: '+5',
+      changeType: 'positive'
     },
     {
-      id: 'business',
-      name: 'Business',
-      price: 'R$ 79,90',
-      storage: '50 GB',
-      bandwidth: 'Ilimitado',
-      domains: 'Ilimitado',
-      databases: 'Ilimitado',
-      email: 'Ilimitado',
-      ssl: true,
-      backup: true
+      label: 'Atendimentos Encerrados',
+      value: '224',
+      icon: 'CheckCircle',
+      color: 'success',
+      change: '+18',
+      changeType: 'positive'
+    },
+    {
+      label: 'Tempo Médio Resposta',
+      value: '12min',
+      icon: 'Timer',
+      color: 'accent',
+      change: '-3min',
+      changeType: 'positive'
     }
   ];
 
-  const websites = [
+  const clientes = [
     {
       id: 1,
-      domain: 'meusite.com.br',
+      nome: 'João Silva',
+      telefone: '+55 11 99999-8888',
+      etiqueta: 'VIP',
+      ultimoContato: '2 min atrás',
       status: 'online',
-      plan: 'Premium',
-      visitors: '2.3k',
-      bandwidth: '45%',
-      lastBackup: '2 horas atrás'
+      avatar: 'JS',
+      origem: 'WhatsApp'
     },
     {
       id: 2,
-      domain: 'loja.exemplo.com',
-      status: 'online',
-      plan: 'Business',
-      visitors: '5.7k',
-      bandwidth: '67%',
-      lastBackup: '1 hora atrás'
+      nome: 'Maria Santos',
+      telefone: '+55 11 88888-7777',
+      etiqueta: 'Suporte',
+      ultimoContato: '15 min atrás',
+      status: 'aguardando',
+      avatar: 'MS',
+      origem: 'WhatsApp'
     },
     {
       id: 3,
-      domain: 'blog.teste.net',
-      status: 'maintenance',
-      plan: 'Básico',
-      visitors: '890',
-      bandwidth: '23%',
-      lastBackup: '4 horas atrás'
-    }
-  ];
-
-  const quickStats = [
-    {
-      label: 'Sites Ativos',
-      value: '3',
-      icon: 'Globe',
-      color: 'primary'
+      nome: 'Pedro Oliveira',
+      telefone: '+55 11 77777-6666',
+      etiqueta: 'Vendas',
+      ultimoContato: '1 hora atrás',
+      status: 'encerrado',
+      avatar: 'PO',
+      origem: 'WhatsApp'
     },
     {
-      label: 'Uptime',
-      value: '99.9%',
-      icon: 'Activity',
-      color: 'success'
+      id: 4,
+      nome: 'Ana Costa',
+      telefone: '+55 11 66666-5555',
+      etiqueta: 'Técnico',
+      ultimoContato: '2 horas atrás',
+      status: 'online',
+      avatar: 'AC',
+      origem: 'WhatsApp'
     },
     {
-      label: 'Visitantes Hoje',
-      value: '8.9k',
-      icon: 'Users',
-      color: 'accent'
-    },
-    {
-      label: 'Armazenamento',
-      value: '65%',
-      icon: 'HardDrive',
-      color: 'warning'
+      id: 5,
+      nome: 'Carlos Ferreira',
+      telefone: '+55 11 55555-4444',
+      etiqueta: 'VIP',
+      ultimoContato: '3 horas atrás',
+      status: 'aguardando',
+      avatar: 'CF',
+      origem: 'WhatsApp'
     }
   ];
 
@@ -108,12 +100,12 @@ const Umbler = () => {
     switch (status) {
       case 'online':
         return 'bg-success text-success-foreground';
-      case 'maintenance':
+      case 'aguardando':
         return 'bg-warning text-warning-foreground';
-      case 'offline':
-        return 'bg-error text-error-foreground';
-      default:
+      case 'encerrado':
         return 'bg-muted text-muted-foreground';
+      default:
+        return 'bg-primary text-primary-foreground';
     }
   };
 
@@ -121,13 +113,41 @@ const Umbler = () => {
     switch (status) {
       case 'online':
         return 'Online';
-      case 'maintenance':
-        return 'Manutenção';
-      case 'offline':
-        return 'Offline';
+      case 'aguardando':
+        return 'Aguardando';
+      case 'encerrado':
+        return 'Encerrado';
       default:
-        return 'Desconhecido';
+        return 'Novo';
     }
+  };
+
+  const getEtiquetaColor = (etiqueta) => {
+    switch (etiqueta) {
+      case 'VIP':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Suporte':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'Vendas':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'Técnico':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-200';
+    }
+  };
+
+  const filteredClientes = clientes.filter(cliente => {
+    if (selectedFilter === 'todos') return true;
+    if (selectedFilter === 'online') return cliente.status === 'online';
+    if (selectedFilter === 'aguardando') return cliente.status === 'aguardando';
+    if (selectedFilter === 'encerrado') return cliente.status === 'encerrado';
+    return true;
+  });
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => setIsRefreshing(false), 2000);
   };
 
   return (
@@ -141,42 +161,49 @@ const Umbler = () => {
           {/* Header */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 space-y-4 lg:space-y-0">
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">Umbler Dashboard</h1>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Centro de Atendimento</h1>
               <p className="text-muted-foreground">
-                Gerencie seus sites e planos de hospedagem
+                Gerencie atendimentos e clientes do WhatsApp integrado via webhook
               </p>
             </div>
             
             <div className="flex flex-wrap items-center gap-3">
-              <Button variant="outline" size="sm">
-                <Icon name="Plus" size={16} className="mr-2" />
-                Novo Site
-              </Button>
-              
-              <Button variant="outline" size="sm">
-                <Icon name="Settings" size={16} className="mr-2" />
-                Configurações
-              </Button>
-              
               <Button 
-                variant={isManaging ? "default" : "ghost"} 
-                size="sm" 
-                onClick={() => setIsManaging(!isManaging)}
+                variant="outline" 
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isRefreshing}
               >
-                <Icon name="Edit" size={16} className="mr-2" />
-                Gerenciar
+                <Icon name={isRefreshing ? "Loader2" : "RefreshCw"} size={16} className={`mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
+              
+              <Button variant="outline" size="sm">
+                <Icon name="Download" size={16} className="mr-2" />
+                Exportar
+              </Button>
+              
+              <Button size="sm">
+                <Icon name="MessageSquare" size={16} className="mr-2" />
+                Novo Atendimento
               </Button>
             </div>
           </div>
 
-          {/* Quick Stats */}
+          {/* Atendimento Stats */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {quickStats.map((stat, index) => (
+            {atendimentoStats.map((stat, index) => (
               <div key={index} className="bg-card border border-border rounded-lg p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
                     <p className="text-2xl font-bold text-foreground mt-1">{stat.value}</p>
+                    <div className="flex items-center mt-2">
+                      <span className={`text-sm font-medium ${stat.changeType === 'positive' ? 'text-success' : 'text-error'}`}>
+                        {stat.change}
+                      </span>
+                      <span className="text-xs text-muted-foreground ml-1">vs. semana anterior</span>
+                    </div>
                   </div>
                   <div className={`p-3 rounded-lg bg-${stat.color}/10`}>
                     <Icon name={stat.icon} size={24} className={`text-${stat.color}`} />
@@ -186,161 +213,138 @@ const Umbler = () => {
             ))}
           </div>
 
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-            {/* Websites Management */}
-            <div className="xl:col-span-2">
-              <div className="bg-card border border-border rounded-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Meus Sites</h2>
-                  <Button size="sm">
-                    <Icon name="Plus" size={16} className="mr-2" />
-                    Adicionar Site
-                  </Button>
-                </div>
-                
-                <div className="space-y-4">
-                  {websites.map((website) => (
-                    <div key={website.id} className="border border-border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center space-x-3">
-                          <Icon name="Globe" size={20} className="text-primary" />
-                          <div>
-                            <h3 className="font-medium text-foreground">{website.domain}</h3>
-                            <p className="text-sm text-muted-foreground">Plano {website.plan}</p>
-                          </div>
-                        </div>
-                        <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(website.status)}`}>
-                          {getStatusText(website.status)}
-                        </span>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <p className="text-muted-foreground">Visitantes</p>
-                          <p className="font-medium text-foreground">{website.visitors}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Banda Usada</p>
-                          <p className="font-medium text-foreground">{website.bandwidth}</p>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Último Backup</p>
-                          <p className="font-medium text-foreground">{website.lastBackup}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-end space-x-2 mt-4">
-                        <Button variant="ghost" size="sm">
-                          <Icon name="ExternalLink" size={14} className="mr-1" />
-                          Visitar
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Icon name="Settings" size={14} className="mr-1" />
-                          Gerenciar
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          {/* Filtros e Lista de Clientes */}
+          <div className="bg-card border border-border rounded-lg p-6 mb-8">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 space-y-4 lg:space-y-0">
+              <h2 className="text-xl font-semibold text-foreground">Clientes do WhatsApp</h2>
+              
+              {/* Filtros */}
+              <div className="flex bg-muted rounded-lg p-1">
+                {[
+                  { key: 'todos', label: 'Todos' },
+                  { key: 'online', label: 'Online' },
+                  { key: 'aguardando', label: 'Aguardando' },
+                  { key: 'encerrado', label: 'Encerrado' }
+                ].map((filter) => (
+                  <button
+                    key={filter.key}
+                    onClick={() => setSelectedFilter(filter.key)}
+                    className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+                      selectedFilter === filter.key
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
               </div>
             </div>
-
-            {/* Hosting Plans */}
-            <div className="xl:col-span-1">
-              <div className="bg-card border border-border rounded-lg p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-semibold text-foreground">Planos</h2>
-                  <Button variant="ghost" size="sm">
-                    <Icon name="RefreshCw" size={16} />
-                  </Button>
-                </div>
-                
-                <div className="space-y-4">
-                  {hostingPlans.map((plan) => (
-                    <div 
-                      key={plan.id} 
-                      className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-                        selectedPlan === plan.id 
-                          ? 'border-primary bg-primary/5' 
-                          : 'border-border hover:border-primary/50'
-                      }`}
-                      onClick={() => setSelectedPlan(plan.id)}
-                    >
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-medium text-foreground">{plan.name}</h3>
-                        <span className="text-lg font-bold text-primary">{plan.price}</span>
+            
+            <div className="space-y-4">
+              {filteredClientes.map((cliente) => (
+                <div key={cliente.id} className="border border-border rounded-lg p-4 hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      {/* Avatar */}
+                      <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-semibold">
+                        {cliente.avatar}
                       </div>
                       
-                      <div className="space-y-2 text-sm">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Armazenamento</span>
-                          <span className="text-foreground">{plan.storage}</span>
+                      {/* Info do Cliente */}
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-3 mb-1">
+                          <h3 className="font-medium text-foreground">{cliente.nome}</h3>
+                          <span className={`px-2 py-1 rounded-md text-xs font-medium border ${getEtiquetaColor(cliente.etiqueta)}`}>
+                            {cliente.etiqueta}
+                          </span>
+                          <span className={`px-2 py-1 rounded-md text-xs font-medium ${getStatusColor(cliente.status)}`}>
+                            {getStatusText(cliente.status)}
+                          </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Transferência</span>
-                          <span className="text-foreground">{plan.bandwidth}</span>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                          <div className="flex items-center space-x-1">
+                            <Icon name="Phone" size={14} />
+                            <span>{cliente.telefone}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Icon name="MessageSquare" size={14} />
+                            <span>{cliente.origem}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Icon name="Clock" size={14} />
+                            <span>{cliente.ultimoContato}</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Domínios</span>
-                          <span className="text-foreground">{plan.domains}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Bancos de Dados</span>
-                          <span className="text-foreground">{plan.databases}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex justify-between items-center mt-3 pt-3 border-t border-border">
-                        <div className="flex space-x-2">
-                          {plan.ssl && <Icon name="Shield" size={16} className="text-success" />}
-                          {plan.backup && <Icon name="Database" size={16} className="text-primary" />}
-                        </div>
-                        <Button size="sm" variant={selectedPlan === plan.id ? "default" : "outline"}>
-                          {selectedPlan === plan.id ? "Atual" : "Contratar"}
-                        </Button>
                       </div>
                     </div>
-                  ))}
+                    
+                    {/* Ações */}
+                    <div className="flex space-x-2">
+                      <Button variant="ghost" size="sm">
+                        <Icon name="MessageCircle" size={16} className="mr-1" />
+                        Chat
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Icon name="Eye" size={16} className="mr-1" />
+                        Ver
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Icon name="MoreHorizontal" size={16} />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Support and Resources */}
+          {/* Gráfico de Atendimentos */}
           <div className="bg-card border border-border rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-foreground mb-4">Suporte e Recursos</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <h2 className="text-xl font-semibold text-foreground mb-4">Gráfico de Atendimentos</h2>
+            <div className="h-64 flex items-center justify-center bg-muted/30 rounded-lg">
+              <div className="text-center">
+                <Icon name="BarChart3" size={48} className="text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">Gráfico de Atendimentos por Período</p>
+                <p className="text-xs text-muted-foreground mt-1">Dados em tempo real do webhook do WhatsApp</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               <div className="text-center">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="HelpCircle" size={24} className="text-primary" />
+                  <Icon name="Webhook" size={24} className="text-primary" />
                 </div>
-                <h3 className="font-medium text-foreground mb-2">Central de Ajuda</h3>
+                <h3 className="font-medium text-foreground mb-2">Webhook Status</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Encontre respostas para suas dúvidas em nossa base de conhecimento
+                  Integração ativa com WhatsApp
                 </p>
-                <Button variant="outline" size="sm">Acessar</Button>
+                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-success text-success-foreground">
+                  <Icon name="CheckCircle" size={12} className="mr-1" />
+                  Conectado
+                </span>
               </div>
               
               <div className="text-center">
                 <div className="w-12 h-12 bg-success/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="MessageCircle" size={24} className="text-success" />
+                  <Icon name="MessageSquare" size={24} className="text-success" />
                 </div>
-                <h3 className="font-medium text-foreground mb-2">Chat ao Vivo</h3>
+                <h3 className="font-medium text-foreground mb-2">Últimas Mensagens</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Converse com nosso suporte especializado
+                  Sincronização em tempo real
                 </p>
-                <Button variant="outline" size="sm">Iniciar Chat</Button>
+                <Button variant="outline" size="sm">Ver Todas</Button>
               </div>
               
               <div className="text-center">
                 <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon name="BookOpen" size={24} className="text-accent" />
+                  <Icon name="Settings" size={24} className="text-accent" />
                 </div>
-                <h3 className="font-medium text-foreground mb-2">Documentação</h3>
+                <h3 className="font-medium text-foreground mb-2">Configurações</h3>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Guias técnicos e tutoriais completos
+                  Gerenciar webhook e notificações
                 </p>
-                <Button variant="outline" size="sm">Ver Docs</Button>
+                <Button variant="outline" size="sm">Configurar</Button>
               </div>
             </div>
           </div>
