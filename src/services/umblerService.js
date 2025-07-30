@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3000/api';
+const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api/umbler';
 
 class UmblerService {
   constructor() {
@@ -209,7 +209,7 @@ class UmblerService {
 
   async getWebhookInfo() {
     try {
-      const response = await this.api.get('/webhook/info');
+      const response = await this.api.get('/webhook/status');
       return response.data;
     } catch (error) {
       throw error;
@@ -227,20 +227,18 @@ class UmblerService {
 
   async checkHealth() {
     try {
-      const response = await this.api.get('/health', { 
-        baseURL: API_BASE_URL.replace('/api', ''),
+      const response = await this.api.get('/health/detailed', { 
         timeout: 5000 
       });
-      return response.data;
+      return { ...response.data, connected: true };
     } catch (error) {
-      throw error;
+      return { connected: false, error: error.message };
     }
   }
 
   async getDetailedHealth() {
     try {
       const response = await this.api.get('/health/detailed', { 
-        baseURL: API_BASE_URL.replace('/api', ''),
         timeout: 5000 
       });
       return response.data;
@@ -255,18 +253,8 @@ class UmblerService {
 
   async getDashboardStats() {
     try {
-      const [contacts, messages, conversations] = await Promise.all([
-        this.getContacts({ limit: 1 }),
-        this.getMessages({ limit: 1 }),
-        this.getConversations({ limit: 1 })
-      ]);
-
-      return {
-        totalContacts: contacts.total || 0,
-        totalMessages: messages.total || 0,
-        totalConversations: conversations.total || 0,
-        openConversations: conversations.conversations?.filter(c => c.status === 'open').length || 0
-      };
+      const response = await this.api.get('/stats');
+      return response.data;
     } catch (error) {
       console.error('Erro ao buscar estatísticas:', error);
       return {
