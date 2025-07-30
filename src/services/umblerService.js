@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api/umbler';
+const API_BASE_URL = '/api/umbler';
 
 class UmblerService {
   constructor() {
@@ -19,12 +19,14 @@ class UmblerService {
       (response) => response,
       (error) => {
         console.error('Erro na API Umbler:', error);
-        throw this.handleError(error);
+        // Não lançar erro novamente, apenas retornar o erro tratado
+        return Promise.reject(this.handleError(error));
       }
     );
   }
 
   handleError(error) {
+    console.log('Error details:', error);
     if (error.response) {
       // Erro da API
       return {
@@ -232,7 +234,12 @@ class UmblerService {
       });
       return { ...response.data, connected: true };
     } catch (error) {
-      return { connected: false, error: error.message };
+      console.log('Health check failed:', error);
+      return { 
+        connected: false, 
+        error: error.message || 'Erro de conexão',
+        status: 'error'
+      };
     }
   }
 
@@ -257,11 +264,13 @@ class UmblerService {
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar estatísticas:', error);
+      // Retornar dados padrão em caso de erro
       return {
         totalContacts: 0,
         totalMessages: 0,
         totalConversations: 0,
-        openConversations: 0
+        openConversations: 0,
+        error: error.message || 'Erro de conexão'
       };
     }
   }
@@ -277,6 +286,7 @@ class UmblerService {
       return contactsResponse.contacts || [];
     } catch (error) {
       console.error('Erro ao buscar contatos com última mensagem:', error);
+      // Retornar array vazio em caso de erro
       return [];
     }
   }
@@ -293,6 +303,7 @@ class UmblerService {
       return response.messages || [];
     } catch (error) {
       console.error('Erro ao buscar mensagens da conversa:', error);
+      // Retornar array vazio em caso de erro
       return [];
     }
   }
@@ -316,7 +327,11 @@ class UmblerService {
         });
       } catch (error) {
         console.error('Erro no polling:', error);
-        callback({ error: error.message });
+        callback({ 
+          error: error.message || 'Erro de conexão',
+          stats: { totalContacts: 0, totalMessages: 0, totalConversations: 0, openConversations: 0 },
+          contacts: []
+        });
       }
     };
 
