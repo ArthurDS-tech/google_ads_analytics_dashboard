@@ -24,4 +24,12 @@ export default defineConfig({
     port: 5173,
     host: true,
   },
+  optimizeDeps: {
+    // Força o Vite a usar uma configuração mais compatível
+    force: true,
+  },
+  esbuild: {
+    // Configuração para compatibilidade com Node.js mais recente
+    target: 'node18',
+  },
 })

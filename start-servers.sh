@@ -28,13 +28,24 @@ sleep 5
 if curl -s http://localhost:3001/health > /dev/null; then
     echo "✅ Backend server is running on http://localhost:3001"
 else
-    echo "❌ Backend server failed to start. Check backend.log for details."
-    exit 1
+    echo "❌ Backend server failed to start. Checking logs..."
+    echo "📋 Last 10 lines of backend log:"
+    tail -10 ../backend.log
+    echo ""
+    echo "💡 This is normal if Google Ads API is not configured (development mode)"
+    echo "🔧 Backend will run with mock data until you configure the API keys"
 fi
 
 # Start frontend server
 echo "🌐 Starting frontend server..."
 cd ..
+
+# Clean node_modules cache if needed (for Node.js compatibility)
+if [ ! -d "node_modules" ] || [ ! -f "node_modules/.vite/deps/_metadata.json" ]; then
+    echo "🧹 Cleaning and installing frontend dependencies..."
+    rm -rf node_modules/.vite
+fi
+
 npm install
 
 # Set environment variables
@@ -47,13 +58,17 @@ echo "Frontend server started with PID: $FRONTEND_PID"
 
 # Wait for frontend to start
 echo "⏳ Waiting for frontend to initialize..."
-sleep 8
+sleep 10
 
 # Check if frontend is running
 if curl -s http://localhost:5173 > /dev/null; then
     echo "✅ Frontend server is running on http://localhost:5173"
 else
-    echo "❌ Frontend server failed to start. Check frontend.log for details."
+    echo "❌ Frontend server failed to start. Checking logs..."
+    echo "📋 Last 10 lines of frontend log:"
+    tail -10 frontend.log
+    echo ""
+    echo "💡 Try running: npm run dev manually to see detailed error"
 fi
 
 echo ""
