@@ -1,0 +1,46 @@
+
+> google-ads-backend@1.0.0 dev
+> nodemon server.js
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node server.js`[39m
+⚠️  Google Ads API configuration is missing. Server will start but Google Ads functionality will be disabled.
+Please configure the following environment variables in backend/.env:
+- GOOGLE_CLIENT_ID
+- GOOGLE_CLIENT_SECRET
+- GOOGLE_REFRESH_TOKEN
+- GOOGLE_DEVELOPER_TOKEN
+- GOOGLE_ADS_CUSTOMER_ID
+⚠️  Supabase configuration is missing or using placeholder values. Database functionality will be disabled.
+CORS Configuration: {
+  origin: 'http://localhost:5173',
+  credentials: true,
+  optionsSuccessStatus: 200,
+  methods: [ 'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS' ],
+  allowedHeaders: [ 'Content-Type', 'Authorization' ]
+}
+🚀 Server running on port 3001
+📊 Google Ads Dashboard API is ready
+🔌 WebSocket server initialized
+🌍 Environment: development
+2025-07-30T18:51:16.349Z - GET /health
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:16 +0000] "GET /health HTTP/1.1" 200 119 "-" "curl/8.12.1"
+2025-07-30T18:51:29.488Z - GET /health
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:29 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"
+2025-07-30T18:51:30.630Z - GET /api/umbler/stats
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:30 +0000] "GET /api/umbler/stats HTTP/1.1" 200 83 "-" "curl/8.12.1"
+2025-07-30T18:51:36.889Z - GET /health
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:36 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"
+2025-07-30T18:51:37.847Z - GET /api/umbler/stats
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:37 +0000] "GET /api/umbler/stats HTTP/1.1" 200 83 "-" "curl/8.12.1"
+2025-07-30T18:51:39.022Z - GET /api/umbler/contacts?limit=1
+Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
+::1 - - [30/Jul/2025:18:51:39 +0000] "GET /api/umbler/contacts?limit=1 HTTP/1.1" 200 680 "-" "curl/8.12.1"
