@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 // Configuração base da API
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api/umbler';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3001/api/umbler';
 
 class UmblerService {
   constructor() {
