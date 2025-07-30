@@ -14,6 +14,7 @@ import authRoutes from './routes/auth.js';
 import campaignRoutes from './routes/campaigns.js';
 import accountRoutes from './routes/accounts.js';
 import reportsRoutes from './routes/reports.js';
+import umblerRoutes from './routes/umbler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -90,6 +91,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/campaigns', campaignRoutes);
 app.use('/api/accounts', accountRoutes);
 app.use('/api/reports', reportsRoutes);
+app.use('/api/umbler', umblerRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
