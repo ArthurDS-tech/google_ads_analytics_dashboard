@@ -1,14 +1,15 @@
 // Serviço para integração com o backend Umbler
 import axios from 'axios';
+import ENV_CONFIG from '../config/environment.js';
 
 // Configuração base da API
-const API_BASE_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api/umbler';
+const API_BASE_URL = ENV_CONFIG.BACKEND_URL;
 
 class UmblerService {
   constructor() {
     this.api = axios.create({
       baseURL: API_BASE_URL,
-      timeout: 10000,
+      timeout: ENV_CONFIG.API_CONFIG.TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
       },

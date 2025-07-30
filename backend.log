@@ -26,21 +26,9 @@ CORS Configuration: {
 📊 Google Ads Dashboard API is ready
 🔌 WebSocket server initialized
 🌍 Environment: development
-2025-07-30T18:51:16.349Z - GET /health
+2025-07-30T19:21:14.061Z - GET /health
 Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:16 +0000] "GET /health HTTP/1.1" 200 119 "-" "curl/8.12.1"
-2025-07-30T18:51:29.488Z - GET /health
+::1 - - [30/Jul/2025:19:21:14 +0000] "GET /health HTTP/1.1" 200 119 "-" "curl/8.12.1"
+2025-07-30T19:22:32.938Z - GET /health
 Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:29 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"
-2025-07-30T18:51:30.630Z - GET /api/umbler/stats
-Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:30 +0000] "GET /api/umbler/stats HTTP/1.1" 200 83 "-" "curl/8.12.1"
-2025-07-30T18:51:36.889Z - GET /health
-Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:36 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"
-2025-07-30T18:51:37.847Z - GET /api/umbler/stats
-Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:37 +0000] "GET /api/umbler/stats HTTP/1.1" 200 83 "-" "curl/8.12.1"
-2025-07-30T18:51:39.022Z - GET /api/umbler/contacts?limit=1
-Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:18:51:39 +0000] "GET /api/umbler/contacts?limit=1 HTTP/1.1" 200 680 "-" "curl/8.12.1"
+::1 - - [30/Jul/2025:19:22:32 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"

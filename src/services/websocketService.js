@@ -1,11 +1,12 @@
 import { io } from 'socket.io-client';
+import ENV_CONFIG from '../config/environment.js';
 
 class WebSocketService {
   constructor() {
     this.socket = null;
     this.isConnected = false;
     this.reconnectAttempts = 0;
-    this.maxReconnectAttempts = 5;
+    this.maxReconnectAttempts = ENV_CONFIG.WEBSOCKET_CONFIG.RECONNECT_ATTEMPTS;
     this.eventListeners = new Map();
     
     // Configuration
@@ -13,10 +14,10 @@ class WebSocketService {
       url: this.getWebSocketUrl(),
       options: {
         transports: ['websocket', 'polling'],
-        timeout: 10000,
+        timeout: ENV_CONFIG.WEBSOCKET_CONFIG.TIMEOUT,
         forceNew: true,
         reconnection: true,
-        reconnectionDelay: 1000,
+        reconnectionDelay: ENV_CONFIG.WEBSOCKET_CONFIG.RECONNECT_DELAY,
         reconnectionDelayMax: 5000,
         reconnectionAttempts: this.maxReconnectAttempts,
         autoConnect: false
@@ -25,10 +26,8 @@ class WebSocketService {
   }
 
   getWebSocketUrl() {
-    // Get WebSocket URL from environment or construct from current location
-    const backendUrl = process.env.REACT_APP_BACKEND_URL || 
-                      process.env.REACT_APP_WEBSOCKET_URL ||
-                      'http://localhost:3001';
+    // Get WebSocket URL from environment configuration
+    const backendUrl = ENV_CONFIG.WEBSOCKET_URL;
     
     // Remove /api/umbler suffix if present
     const baseUrl = backendUrl.replace('/api/umbler', '');

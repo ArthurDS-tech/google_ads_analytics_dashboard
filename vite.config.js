@@ -15,4 +15,13 @@ export default defineConfig({
       'styles': path.resolve(__dirname, './src/styles'),
     },
   },
+  define: {
+    // Definir variáveis de ambiente globalmente
+    'process.env.REACT_APP_BACKEND_URL': JSON.stringify(process.env.REACT_APP_BACKEND_URL || 'http://localhost:3001/api/umbler'),
+    'process.env.REACT_APP_WEBSOCKET_URL': JSON.stringify(process.env.REACT_APP_WEBSOCKET_URL || 'http://localhost:3001'),
+  },
+  server: {
+    port: 5173,
+    host: true,
+  },
 })

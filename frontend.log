@@ -3,7 +3,7 @@
 > vite
 
 
-  VITE v4.5.14  ready in 184 ms
+  VITE v4.5.14  ready in 188 ms
 
   ➜  Local:   http://localhost:5173/
-  ➜  Network: use --host to expose
+  ➜  Network: http://172.30.0.2:5173/
