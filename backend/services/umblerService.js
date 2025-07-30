@@ -10,6 +10,11 @@ export class UmblerService {
       contactCount: 0,
       conversationCount: 0
     };
+    this.websocketBroadcast = null; // Will be set by the server
+  }
+
+  setWebSocketBroadcast(broadcastFunction) {
+    this.websocketBroadcast = broadcastFunction;
   }
 
   // =============================================
@@ -58,6 +63,14 @@ export class UmblerService {
         data: messageData,
         timestamp: new Date().toISOString()
       });
+
+      // Broadcast update via WebSocket
+      if (this.websocketBroadcast) {
+        this.websocketBroadcast({
+          type: 'new_message',
+          data: messageData
+        });
+      }
 
       return messageData;
     } catch (error) {

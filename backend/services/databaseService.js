@@ -1,192 +1,140 @@
 import { supabase } from '../config/database.js';
 
 export class DatabaseService {
-  // Account management
-  async saveAccount(accountData) {
-    try {
-      if (!supabase) {
-        console.warn('Database not configured, skipping account save');
-        return null;
-      }
-      
-      const { data, error } = await supabase
-        .from('accounts')
-        .upsert({
-          google_ads_id: accountData.id,
-          name: accountData.name,
-          currency: accountData.currency,
-          time_zone: accountData.timeZone,
-          status: accountData.status,
-          updated_at: new Date().toISOString()
-        })
-        .select();
-
-      if (error) throw error;
-      return data[0];
-    } catch (error) {
-      console.error('Error saving account:', error);
-      throw new Error('Failed to save account data');
-    }
+  constructor() {
+    this.client = supabase;
   }
 
-  async getAccounts() {
-    try {
-      if (!supabase) {
-        console.warn('Database not configured, returning empty accounts list');
-        return [];
-      }
-      
-      const { data, error } = await supabase
-        .from('accounts')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error fetching accounts:', error);
-      throw new Error('Failed to fetch accounts');
+  // Basic database operations
+  async query(table, options = {}) {
+    if (!this.client) {
+      throw new Error('Database not configured');
     }
-  }
 
-  // Campaign data management
-  async saveCampaignData(accountId, campaigns) {
     try {
-      if (!supabase) {
-        console.warn('Database not configured, skipping campaign data save');
-        return null;
-      }
+      let query = this.client.from(table);
       
-      const campaignInserts = campaigns.map(campaign => ({
-        account_id: accountId,
-        google_ads_campaign_id: campaign.id,
-        name: campaign.name,
-        status: campaign.status,
-        type: campaign.type,
-        impressions: campaign.metrics.impressions,
-        clicks: campaign.metrics.clicks,
-        ctr: parseFloat(campaign.metrics.ctr),
-        cost: parseFloat(campaign.metrics.cost),
-        conversions: campaign.metrics.conversions,
-        conversions_value: campaign.metrics.conversionsValue,
-        cpc: parseFloat(campaign.metrics.cpc),
-        updated_at: new Date().toISOString()
-      }));
-
-      const { data, error } = await supabase
-        .from('campaigns')
-        .upsert(campaignInserts, { 
-          onConflict: 'account_id,google_ads_campaign_id',
-          ignoreDuplicates: false 
-        })
-        .select();
-
-      if (error) throw error;
-
-      // Save daily data
-      for (const campaign of campaigns) {
-        if (campaign.dailyData && campaign.dailyData.length > 0) {
-          await this.saveDailyData(accountId, campaign.id, campaign.dailyData);
-        }
+      if (options.select) {
+        query = query.select(options.select);
+      } else {
+        query = query.select('*');
       }
 
-      return data;
-    } catch (error) {
-      console.error('Error saving campaign data:', error);
-      throw new Error('Failed to save campaign data');
-    }
-  }
-
-  async saveDailyData(accountId, campaignId, dailyData) {
-    try {
-      if (!supabase) {
-        console.warn('Database not configured, skipping daily data save');
-        return null;
-      }
-      
-      const dailyInserts = dailyData.map(day => ({
-        account_id: accountId,
-        campaign_id: campaignId,
-        date: day.date,
-        impressions: day.impressions,
-        clicks: day.clicks,
-        ctr: day.ctr,
-        cost: day.cost,
-        conversions: day.conversions
-      }));
-
-      const { error } = await supabase
-        .from('daily_metrics')
-        .upsert(dailyInserts, { 
-          onConflict: 'account_id,campaign_id,date',
-          ignoreDuplicates: false 
+      if (options.where) {
+        Object.entries(options.where).forEach(([key, value]) => {
+          query = query.eq(key, value);
         });
-
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error saving daily data:', error);
-      throw new Error('Failed to save daily metrics');
-    }
-  }
-
-  // Report generation
-  async generateReport(accountId, dateRange = 30) {
-    try {
-      if (!supabase) {
-        console.warn('Database not configured, returning empty report');
-        return { campaigns: [], summary: {} };
       }
-      
-      const startDate = new Date(Date.now() - (dateRange * 24 * 60 * 60 * 1000))
-        .toISOString().split('T')[0];
-      
-      const { data, error } = await supabase
-        .from('daily_metrics')
-        .select(`
-          *,
-          campaigns(name, type)
-        `)
-        .eq('account_id', accountId)
-        .gte('date', startDate)
-        .order('date', { ascending: true });
 
-      if (error) throw error;
+      if (options.order) {
+        query = query.order(options.order.column, { 
+          ascending: options.order.ascending || false 
+        });
+      }
+
+      if (options.limit) {
+        query = query.limit(options.limit);
+      }
+
+      const { data, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+
       return data;
     } catch (error) {
-      console.error('Error generating report:', error);
-      throw new Error('Failed to generate report');
+      console.error('Database query error:', error);
+      throw error;
     }
   }
 
-  // Save account summary
-  async saveAccountSummary(accountId, summaryData) {
+  async insert(table, data) {
+    if (!this.client) {
+      throw new Error('Database not configured');
+    }
+
     try {
-      if (!supabase) {
-        console.warn('Database not configured, skipping account summary save');
-        return null;
-      }
-      
-      const { data, error } = await supabase
-        .from('account_summaries')
-        .upsert({
-          account_id: accountId,
-          impressions: summaryData.summary.impressions,
-          clicks: summaryData.summary.clicks,
-          ctr: parseFloat(summaryData.summary.ctr),
-          cost: parseFloat(summaryData.summary.cost),
-          conversions: summaryData.summary.conversions,
-          conversions_value: parseFloat(summaryData.summary.conversionsValue),
-          cpc: parseFloat(summaryData.summary.cpc),
-          date_range: 30, // Default range
-          updated_at: new Date().toISOString()
-        })
+      const { data: result, error } = await this.client
+        .from(table)
+        .insert(data)
         .select();
 
-      if (error) throw error;
-      return data[0];
+      if (error) {
+        throw error;
+      }
+
+      return result;
     } catch (error) {
-      console.error('Error saving account summary:', error);
-      throw new Error('Failed to save account summary');
+      console.error('Database insert error:', error);
+      throw error;
+    }
+  }
+
+  async update(table, id, data) {
+    if (!this.client) {
+      throw new Error('Database not configured');
+    }
+
+    try {
+      const { data: result, error } = await this.client
+        .from(table)
+        .update(data)
+        .eq('id', id)
+        .select();
+
+      if (error) {
+        throw error;
+      }
+
+      return result;
+    } catch (error) {
+      console.error('Database update error:', error);
+      throw error;
+    }
+  }
+
+  async delete(table, id) {
+    if (!this.client) {
+      throw new Error('Database not configured');
+    }
+
+    try {
+      const { error } = await this.client
+        .from(table)
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Database delete error:', error);
+      throw error;
+    }
+  }
+
+  async healthCheck() {
+    if (!this.client) {
+      return { connected: false, error: 'Database not configured' };
+    }
+
+    try {
+      // Simple query to test connection
+      const { data, error } = await this.client
+        .from('umbler_contacts')
+        .select('id')
+        .limit(1);
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 = table not found, which is okay
+        throw error;
+      }
+
+      return { connected: true };
+    } catch (error) {
+      return { connected: false, error: error.message };
     }
   }
 }

@@ -16,17 +16,18 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 const hasRequiredConfig = GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET && GOOGLE_REFRESH_TOKEN && GOOGLE_DEVELOPER_TOKEN && GOOGLE_ADS_CUSTOMER_ID;
 
 if (!hasRequiredConfig) {
-  if (isDevelopment) {
-    console.warn('⚠️  Google Ads API configuration is missing. Server will start but Google Ads functionality will be disabled.');
-    console.warn('Please configure the following environment variables in backend/.env:');
-    console.warn('- GOOGLE_CLIENT_ID');
-    console.warn('- GOOGLE_CLIENT_SECRET');
-    console.warn('- GOOGLE_REFRESH_TOKEN');
-    console.warn('- GOOGLE_DEVELOPER_TOKEN');
-    console.warn('- GOOGLE_ADS_CUSTOMER_ID');
-  } else {
+  if (!isDevelopment) {
     throw new Error('Missing Google Ads API configuration. Please check your environment variables.');
   }
+  
+  console.warn('⚠️  Google Ads API configuration is missing. Server will start but Google Ads functionality will be disabled.');
+  console.warn('📝 To enable Google Ads functionality, configure the following environment variables in backend/.env:');
+  console.warn('   - GOOGLE_CLIENT_ID');
+  console.warn('   - GOOGLE_CLIENT_SECRET');
+  console.warn('   - GOOGLE_REFRESH_TOKEN');
+  console.warn('   - GOOGLE_DEVELOPER_TOKEN');
+  console.warn('   - GOOGLE_ADS_CUSTOMER_ID');
+  console.warn('📖 See backend/.env.example for more details');
 }
 
 let googleAdsClient = null;
