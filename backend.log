@@ -27,9 +27,9 @@ CORS Configuration: {
 📊 Google Ads Dashboard API is ready
 🔌 WebSocket server initialized
 🌍 Environment: development
-2025-07-30T19:59:12.644Z - GET /health
+2025-07-30T20:10:07.635Z - GET /health
 Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:19:59:12 +0000] "GET /health HTTP/1.1" 200 119 "-" "curl/8.12.1"
-2025-07-30T19:59:39.071Z - GET /api/umbler/stats
+::1 - - [30/Jul/2025:20:10:07 +0000] "GET /health HTTP/1.1" 200 119 "-" "curl/8.12.1"
+2025-07-30T20:11:29.143Z - GET /health
 Headers: { host: 'localhost:3001', 'user-agent': 'curl/8.12.1', accept: '*/*' }
-::1 - - [30/Jul/2025:19:59:39 +0000] "GET /api/umbler/stats HTTP/1.1" 200 83 "-" "curl/8.12.1"
+::1 - - [30/Jul/2025:20:11:29 +0000] "GET /health HTTP/1.1" 200 120 "-" "curl/8.12.1"

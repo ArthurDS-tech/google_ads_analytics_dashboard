@@ -3,20 +3,16 @@
 // Função auxiliar para obter variáveis de ambiente de forma segura
 function getEnvVar(key, defaultValue) {
   // Tenta import.meta.env primeiro (Vite)
-  if (typeof import !== 'undefined' && import.meta && import.meta.env) {
+  if (import.meta?.env?.[key]) {
     return import.meta.env[key];
   }
   
-  // Fallback para process.env (se disponível)
-  if (typeof process !== 'undefined' && process.env) {
+  // Fallback para process.env (se disponível - definido pelo Vite)
+  if (typeof process !== 'undefined' && process.env?.[key]) {
     return process.env[key];
   }
   
-  // Fallback para variáveis globais definidas pelo Vite
-  if (typeof window !== 'undefined' && window.__ENV__) {
-    return window.__ENV__[key];
-  }
-  
+  // Retorna valor padrão
   return defaultValue;
 }
 
